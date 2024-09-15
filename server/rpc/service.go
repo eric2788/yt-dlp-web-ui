@@ -225,7 +225,7 @@ func (s *Service) UpdateExecutable(args NoArgs, updated *bool) error {
 	slog.Info("Updating yt-dlp executable to the latest release")
 
 	if err := updater.UpdateExecutable(); err != nil {
-		slog.Error("Failed updating yt-dlp")
+		slog.Error("Failed updating yt-dlp", slog.String("error", err.Error()))
 		*updated = false
 		return err
 	}
