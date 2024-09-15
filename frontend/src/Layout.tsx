@@ -6,7 +6,7 @@ import LiveTvIcon from '@mui/icons-material/LiveTv'
 import Menu from '@mui/icons-material/Menu'
 import SettingsIcon from '@mui/icons-material/Settings'
 import TerminalIcon from '@mui/icons-material/Terminal'
-import { Box, createTheme } from '@mui/material'
+import { Box, createTheme, useMediaQuery } from '@mui/material'
 import CssBaseline from '@mui/material/CssBaseline'
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
@@ -51,6 +51,8 @@ export default function Layout() {
 
   const { i18n } = useI18n()
 
+  const upSm = useMediaQuery(theme.breakpoints.up('sm'))
+
   return (
     <ThemeProvider theme={theme}>
       <SocketSubscriber />
@@ -65,7 +67,7 @@ export default function Layout() {
               onClick={toggleDrawer}
               sx={{
                 marginRight: '36px',
-                ...(open && { display: 'none' }),
+                ...(open && { display: { sm: 'none' } }),
               }}
             >
               <Menu />
@@ -75,16 +77,16 @@ export default function Layout() {
               variant="h6"
               color="inherit"
               noWrap
-              sx={{ flexGrow: 1 }}
+              
             >
               {settings.appTitle}
             </Typography>
           </Toolbar>
         </AppBar>
-        <Drawer variant="permanent" open={open}>
+        <Drawer variant={upSm ? 'permanent' : 'temporary'} open={open} onClose={() => setOpen(false)}>
           <Toolbar
             sx={{
-              display: 'flex',
+              display: { sm: 'flex', xs: 'none' },
               alignItems: 'center',
               justifyContent: 'flex-end',
               px: [1],
