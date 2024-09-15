@@ -1,15 +1,16 @@
+import { AppBar, Box, CircularProgress, Divider, Toolbar } from '@mui/material'
+
 import DownloadIcon from '@mui/icons-material/Download'
+import FreeSpaceIndicator from './FreeSpaceIndicator'
 import SettingsEthernet from '@mui/icons-material/SettingsEthernet'
-import { AppBar, CircularProgress, Divider, Toolbar } from '@mui/material'
 import { Suspense } from 'react'
-import { useRecoilValue } from 'recoil'
-import { settingsState } from '../atoms/settings'
+import VersionIndicator from './VersionIndicator'
 import { connectedState } from '../atoms/status'
+import { formatSpeedMiB } from '../utils'
+import { settingsState } from '../atoms/settings'
 import { totalDownloadSpeedState } from '../atoms/ui'
 import { useI18n } from '../hooks/useI18n'
-import { formatSpeedMiB } from '../utils'
-import FreeSpaceIndicator from './FreeSpaceIndicator'
-import VersionIndicator from './VersionIndicator'
+import { useRecoilValue } from 'recoil'
 
 const Footer: React.FC = () => {
   const settings = useRecoilValue(settingsState)
@@ -23,16 +24,25 @@ const Footer: React.FC = () => {
     <AppBar position="fixed" color="default" sx={{
       top: 'auto',
       bottom: 0,
-      height: 48,
       zIndex: 1200,
       borderTop: mode === 'light'
         ? '1px solid rgba(0, 0, 0, 0.12)'
         : '1px solid rgba(255, 255, 255, 0.12)',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      height: { md: 48 },
+      
     }}>
       <Toolbar sx={{
-        paddingBottom: 2,
         fontSize: 14,
-        display: 'flex', gap: 1, justifyContent: 'space-between'
+        display: 'flex',
+        gap: 1.5,
+        paddingY: 1,
+        paddingX: { sm: 3, xs: 1 },
+        alignItems: { xs: 'start', md: 'center' },
+        justifyContent: 'space-between',
+        flexDirection: { xs: 'column', md: 'row' },
       }}>
         <Suspense fallback={<CircularProgress size={15} />}>
           <VersionIndicator />
@@ -49,16 +59,20 @@ const Footer: React.FC = () => {
             <span>
               {formatSpeedMiB(totalDownloadSpeed)}
             </span>
-            <Divider orientation="vertical" flexItem />
+          </div>
+          <Divider orientation="vertical" flexItem />
+          <Box sx={{ display: 'flex', gap: 0.5, flexGrow: 2, justifyContent: 'end' }}>
             <SettingsEthernet />
             <span>
               {isConnected ? settings.serverAddr : i18n.t('notConnectedText')}
             </span>
-          </div>
+          </Box>
           <Divider orientation="vertical" flexItem />
-          <Suspense fallback={i18n.t('loadingLabel')}>
-            <FreeSpaceIndicator />
-          </Suspense>
+          <Box sx={{ display: 'flex', gap: 0.5 }}>
+            <Suspense fallback={i18n.t('loadingLabel')}>
+              <FreeSpaceIndicator />
+            </Suspense>
+          </Box>
         </div>
       </Toolbar>
     </AppBar>
