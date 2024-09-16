@@ -24,7 +24,7 @@ const Footer: React.FC = () => {
     <AppBar position="fixed" color="default" sx={{
       top: 'auto',
       bottom: 0,
-      zIndex: 1200,
+      zIndex: 1000,
       borderTop: mode === 'light'
         ? '1px solid rgba(0, 0, 0, 0.12)'
         : '1px solid rgba(255, 255, 255, 0.12)',

@@ -29,7 +29,7 @@ const HomeSpeedDial: React.FC<Props> = ({ onDownloadOpen, onEditorOpen }) => {
   return (
     <SpeedDial
       ariaLabel="Home speed dial"
-      sx={{ position: 'absolute', bottom: 64, right: 24 }}
+      sx={{ position: 'fixed', bottom: 64, right: 24, zIndex: 1001 }}
       icon={<SpeedDialIcon />}
     >
       <SpeedDialAction
