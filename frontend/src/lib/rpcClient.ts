@@ -64,6 +64,30 @@ export class RPCClient {
     return data
   }
 
+  private async sendHTTPAndWait<T>(req: RPCRequest, timeout: number = 30000): Promise<RPCResult[]> {
+    const res = await this.sendHTTP<T>(req)
+    return new Promise<RPCResult[]>((reslove, reject) => {
+      const subscribe = this._socket$.subscribe(
+        (data: RPCResponse<RPCResult[]>) => {
+          if (data.id === res.id) {
+            subscribe.unsubscribe()
+            if (data.error) {
+              reject(data.error)
+            } else {
+              reslove(data.result)
+            }
+          }
+        }
+      )
+      if (timeout > 0) {
+        setTimeout(() => {
+          subscribe.unsubscribe()
+          reject('timeout')
+        }, timeout)
+      }
+    })
+  }
+
   public download(req: DownloadRequestArgs) {
     if (!req.url) {
       return
@@ -192,7 +216,7 @@ export class RPCClient {
     })
   }
 
-  public updateExecutable () {
+  public updateExecutable() {
     return this.sendHTTP({
       method: 'Service.UpdateExecutable',
       params: []
