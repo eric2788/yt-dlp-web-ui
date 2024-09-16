@@ -8,6 +8,7 @@ import {
   Box,
   Button,
   Dialog,
+  Divider,
   Grid,
   IconButton,
   Paper,
@@ -146,7 +147,7 @@ const TemplatesEditor: React.FC<Props> = ({ open, onClose }) => {
         backgroundColor: (theme) => theme.palette.background.default,
         minHeight: (theme) => `calc(99vh - ${theme.mixins.toolbar.minHeight}px)`
       }}>
-        <Grid container spacing={2} sx={{ px: 4, pt: 3, pb: 4 }}>
+        <Grid container spacing={2} sx={{ px: { sm: 4, xs: 2 }, pt: 3, pb: 4 }}>
           <Grid item>
             <Alert severity="info">
               {i18n.t('templatesReloadInfo')}
@@ -161,8 +162,8 @@ const TemplatesEditor: React.FC<Props> = ({ open, onClose }) => {
                 flexDirection: 'column',
               }}
             >
-              <Grid container spacing={2} justifyContent="center" alignItems="center">
-                <Grid item xs={3}>
+              <Grid container spacing={2} justifyContent="center" alignItems="start">
+                <Grid item xs={12} sm={3}>
                   <TextField
                     fullWidth
                     label={i18n.t('templatesEditorNameLabel')}
@@ -170,8 +171,10 @@ const TemplatesEditor: React.FC<Props> = ({ open, onClose }) => {
                     value={templateName}
                   />
                 </Grid>
-                <Grid item xs={9}>
+                <Grid item xs={12} sm={9}>
                   <TextField
+                    multiline
+                    rows={4}
                     fullWidth
                     label={i18n.t('templatesEditorContentLabel')}
                     onChange={e => setTemplateContent(e.currentTarget.value)}
@@ -192,20 +195,22 @@ const TemplatesEditor: React.FC<Props> = ({ open, onClose }) => {
                   container
                   spacing={2}
                   justifyContent="center"
-                  alignItems="center"
+                  alignItems="start"
                   key={template.id}
                   sx={{ mt: 1 }}
                 >
-                  <Grid item xs={3}>
+                  <Grid item xs={12} sm={3}>
                     <TextField
                       fullWidth
                       label={i18n.t('templatesEditorNameLabel')}
                       value={template.name}
                     />
                   </Grid>
-                  <Grid item xs={9}>
+                  <Grid item xs={12} sm={9}>
                     <TextField
                       fullWidth
+                      multiline
+                      maxRows={4}
                       label={i18n.t('templatesEditorContentLabel')}
                       value={template.content}
                       InputProps={{
