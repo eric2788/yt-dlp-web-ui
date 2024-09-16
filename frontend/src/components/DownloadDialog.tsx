@@ -253,6 +253,8 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
                         fullWidth
                         label={i18n.t('customArgsInput')}
                         variant="outlined"
+                        multiline
+                        rows={4}
                         onChange={handleCustomArgsChange}
                         value={customArgs}
                         disabled={
