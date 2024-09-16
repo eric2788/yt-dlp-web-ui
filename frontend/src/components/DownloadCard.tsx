@@ -3,6 +3,7 @@ import FourK from '@mui/icons-material/FourK'
 import Hd from '@mui/icons-material/Hd'
 import Sd from '@mui/icons-material/Sd'
 import {
+  Box,
   Button,
   Card,
   CardActionArea,
@@ -11,6 +12,7 @@ import {
   CardMedia,
   Chip,
   LinearProgress,
+  Paper,
   Skeleton,
   Stack,
   Typography
@@ -20,6 +22,7 @@ import { useRecoilValue } from 'recoil'
 import { serverURL } from '../atoms/settings'
 import { RPCResult } from '../types'
 import { base64URLEncode, ellipsis, formatSize, formatSpeedMiB, mapProcessStatus } from '../utils'
+import styled from '@emotion/styled'
 
 type Props = {
   download: RPCResult
@@ -35,6 +38,13 @@ const Resolution: React.FC<{ resolution?: string }> = ({ resolution }) => {
   if (resolution.includes('720')) return <Sd color="primary" />
   return null
 }
+
+const FlexColGrowBox = styled(Box)`
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  justify-content: space-between;
+`
 
 const DownloadCard: React.FC<Props> = ({ download, onStop, onCopy }) => {
   const serverAddr = useRecoilValue(serverURL)
@@ -62,11 +72,13 @@ const DownloadCard: React.FC<Props> = ({ download, onStop, onCopy }) => {
   }
 
   return (
-    <Card>
-      <CardActionArea onClick={() => {
-        navigator.clipboard.writeText(download.info.url)
-        onCopy()
-      }}>
+    <Paper elevation={3} sx={{
+      display: 'flex',
+      width: '100%',
+      flexDirection: 'column',
+      height: '100%',
+    }}>
+      <Box>
         {download.info.thumbnail !== '' ?
           <CardMedia
             component="img"
@@ -75,21 +87,20 @@ const DownloadCard: React.FC<Props> = ({ download, onStop, onCopy }) => {
           /> :
           <Skeleton variant="rectangular" height={180} />
         }
-        {download.progress.percentage ?
-          <LinearProgress
-            variant="determinate"
-            value={percentageToNumber()}
-            color={isCompleted() ? "success" : "primary"}
-          /> :
-          null
-        }
-        <CardContent>
-          {download.info.title !== '' ?
-            <Typography gutterBottom variant="h6" component="div">
-              {ellipsis(download.info.title, 100)}
-            </Typography> :
-            <Skeleton />
-          }
+      </Box>
+      <FlexColGrowBox p={1}>
+        <FlexColGrowBox sx={{ paddingX: { sm: 1, xs: 0 }, paddingY: 1 }}>
+          <Box sx={{ maxHeight: '64px' }}>
+            {download.info.title !== '' ?
+              <Typography gutterBottom variant="h6" component="div" sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                {download.info.title}
+              </Typography> :
+              <>
+                <Skeleton />
+                <Skeleton width="60%" />
+              </>
+            }
+          </Box>
           <Stack direction="row" spacing={0.5} py={1}>
             <Chip
               label={
@@ -112,39 +123,39 @@ const DownloadCard: React.FC<Props> = ({ download, onStop, onCopy }) => {
             </Typography>
             <Resolution resolution={download.info.resolution} />
           </Stack>
-        </CardContent>
-      </CardActionArea>
-      <CardActions>
-        <Button
-          variant="contained"
-          size="small"
-          color="primary"
-          onClick={onStop}
-        >
-          {isCompleted() ? "Clear" : "Stop"}
-        </Button>
-        {isCompleted() &&
-          <>
-            <Button
-              variant="contained"
-              size="small"
-              color="primary"
-              onClick={() => downloadFile(download.output.savedFilePath)}
-            >
-              Download
-            </Button>
-            <Button
-              variant="contained"
-              size="small"
-              color="primary"
-              onClick={() => viewFile(download.output.savedFilePath)}
-            >
-              View
-            </Button>
-          </>
-        }
-      </CardActions>
-    </Card>
+        </FlexColGrowBox>
+        <Box sx={{ display: 'flex', flexDirection: { sm: 'row', xs: 'column' }, gap: 1 }}>
+          <Button
+            variant="contained"
+            size="small"
+            color="primary"
+            onClick={onStop}
+          >
+            {isCompleted() ? "Clear" : "Stop"}
+          </Button>
+          {isCompleted() &&
+            <>
+              <Button
+                variant="contained"
+                size="small"
+                color="primary"
+                onClick={() => downloadFile(download.output.savedFilePath)}
+              >
+                Download
+              </Button>
+              <Button
+                variant="contained"
+                size="small"
+                color="primary"
+                onClick={() => viewFile(download.output.savedFilePath)}
+              >
+                View
+              </Button>
+            </>
+          }
+        </Box>
+      </FlexColGrowBox>
+    </Paper>
   )
 }
 
