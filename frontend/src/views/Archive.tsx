@@ -20,7 +20,10 @@ import {
   SpeedDial,
   SpeedDialAction,
   SpeedDialIcon,
-  Typography
+  Stack,
+  Theme,
+  Typography,
+  useMediaQuery
 } from '@mui/material'
 
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
@@ -178,6 +181,8 @@ export default function Downloaded() {
     fetcherSubfolder(path)
   })
 
+  const upMd = useMediaQuery<Theme>((theme) => theme.breakpoints.up('md'))
+
   return (
     <Container
       maxWidth="xl"
@@ -231,7 +236,7 @@ export default function Downloaded() {
               key={idx}
               secondaryAction={
                 <div>
-                  {!file.isDirectory && <Typography
+                  {!file.isDirectory && upMd && <Typography
                     variant="caption"
                     component="span"
                   >
@@ -264,7 +269,25 @@ export default function Downloaded() {
                 </ListItemIcon>
                 <ListItemText
                   primary={file.name}
-                  secondary={file.name != '..' && new Date(file.modTime).toLocaleString()}
+                  primaryTypographyProps={{
+                    sx: (theme) => ({
+                      [theme.breakpoints.down('md')]: {
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: '-webkit-box',
+                        WebkitBoxOrient: 'vertical',
+                        WebkitLineClamp: 2,
+                      }
+                    })
+                  }}
+                  secondary={<Stack direction={"column"}>
+                    {file.name != '..' && new Date(file.modTime).toLocaleString()}
+                    {!file.isDirectory && !upMd && (
+                      <Typography variant="caption" component="span" color="black">
+                        {formatSize(file.size)}
+                      </Typography>
+                    )}
+                  </Stack>}
                 />
               </ListItemButton>
             </ListItem>
@@ -273,7 +296,7 @@ export default function Downloaded() {
       </Paper>
       <SpeedDial
         ariaLabel='archive actions'
-        sx={{ position: 'absolute', bottom: 64, right: 24 }}
+        sx={{ position: 'fixed', bottom: 64, right: 24 }}
         icon={<SpeedDialIcon />}
       >
         <SpeedDialAction
