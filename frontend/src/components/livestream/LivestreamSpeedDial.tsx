@@ -14,7 +14,7 @@ const LivestreamSpeedDial: React.FC<Props> = ({ onOpen, onStopAll }) => {
   return (
     <SpeedDial
       ariaLabel="Home speed dial"
-      sx={{ position: 'absolute', bottom: 64, right: 24 }}
+      sx={{ position: 'fixed', bottom: 64, right: 24 }}
       icon={<SpeedDialIcon />}
     >
       <SpeedDialAction
