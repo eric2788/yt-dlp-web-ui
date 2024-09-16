@@ -5,6 +5,7 @@ import (
 	"flag"
 	"io/fs"
 	"log"
+	"log/slog"
 	"os"
 	"runtime"
 
@@ -90,6 +91,13 @@ func main() {
 		c.RequireAuth = requireAuth
 		c.Username = username
 		c.Password = password
+	}
+
+	// if download path not found, create it
+	if err := os.MkdirAll(c.DownloadPath, 0755); err != nil {
+		log.Println(cli.BgRed, "downloadPath", cli.Reset, err)
+	} else {
+		slog.Info("successfully created download path", slog.String("path", c.DownloadPath))
 	}
 
 	// limit concurrent downloads for systems with 2 or less logical cores
