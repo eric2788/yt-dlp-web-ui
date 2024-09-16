@@ -10,6 +10,7 @@ import {
   IconButton,
   LinearProgress,
   LinearProgressProps,
+  Paper,
   Table,
   TableBody,
   TableCell,
@@ -29,43 +30,43 @@ import { base64URLEncode, formatSize, formatSpeedMiB } from "../utils"
 
 const columns = [
   {
-    width: 8,
+    width: '5%',
     label: 'Status',
     dataKey: 'status',
     numeric: false,
   },
   {
-    width: 500,
+    width: '25%',
     label: 'Title',
     dataKey: 'title',
     numeric: false,
   },
   {
-    width: 50,
+    width: '10%',
     label: 'Speed',
     dataKey: 'speed',
     numeric: true,
   },
   {
-    width: 150,
+    width: '15%',
     label: 'Progress',
     dataKey: 'progress',
     numeric: true,
   },
   {
-    width: 80,
+    width: '10%',
     label: 'Size',
     dataKey: 'size',
     numeric: true,
   },
   {
-    width: 100,
+    width: '10%',
     label: 'Added on',
     dataKey: 'addedon',
     numeric: true,
   },
   {
-    width: 80,
+    width: '10%',
     label: 'Actions',
     dataKey: 'actions',
     numeric: true,
@@ -89,12 +90,14 @@ function LinearProgressWithLabel(props: LinearProgressProps & { value: number })
 
 const VirtuosoTableComponents: TableComponents<RPCResult> = {
   Scroller: forwardRef<HTMLDivElement>((props, ref) => (
-    <TableContainer {...props} ref={ref} />
+    <TableContainer {...props} ref={ref} sx={{ minWidth: '800px', width: 'auto'}} />
   )),
   Table: (props) => (
     <Table {...props} sx={{ borderCollapse: 'separate', tableLayout: 'fixed', mt: 2 }} size='small' />
   ),
-  TableHead,
+  TableHead: forwardRef<HTMLTableSectionElement>((props, ref) => (
+    <TableHead component="thead" {...props} ref={ref} />
+  )),
   TableRow: ({ item: _item, ...props }) => <TableRow {...props} />,
   TableBody: forwardRef<HTMLTableSectionElement>((props, ref) => (
     <TableBody {...props} ref={ref} />
