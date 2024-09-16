@@ -1,4 +1,4 @@
-import { CircularProgress } from '@mui/material'
+import { Box, CircularProgress } from '@mui/material'
 import { Suspense, lazy } from 'react'
 import { createHashRouter } from 'react-router-dom'
 import Layout from './Layout'
@@ -12,6 +12,20 @@ const LiveStream = lazy(() => import('./views/Livestream'))
 
 const ErrorBoundary = lazy(() => import('./components/ErrorBoundary'))
 
+const CenterCircularProgress = (
+  <Box
+    sx={{
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+  >
+    <CircularProgress />
+  </Box>
+)
+
 export const router = createHashRouter([
   {
     path: '/',
@@ -20,12 +34,12 @@ export const router = createHashRouter([
       {
         path: '/',
         element: (
-          <Suspense fallback={<CircularProgress />}>
+          <Suspense fallback={CenterCircularProgress}>
             <Home />
           </Suspense >
         ),
         errorElement: (
-          <Suspense fallback={<CircularProgress />}>
+          <Suspense fallback={CenterCircularProgress}>
             <ErrorBoundary />
           </Suspense >
         )
@@ -33,7 +47,7 @@ export const router = createHashRouter([
       {
         path: '/settings',
         element: (
-          <Suspense fallback={<CircularProgress />}>
+          <Suspense fallback={CenterCircularProgress}>
             <Settings />
           </Suspense >
         )
@@ -41,7 +55,7 @@ export const router = createHashRouter([
       {
         path: '/log',
         element: (
-          <Suspense fallback={<CircularProgress />}>
+          <Suspense fallback={CenterCircularProgress}>
             <Terminal />
           </Suspense >
         )
@@ -49,12 +63,12 @@ export const router = createHashRouter([
       {
         path: '/archive',
         element: (
-          <Suspense fallback={<CircularProgress />}>
+          <Suspense fallback={CenterCircularProgress}>
             <Archive />
           </Suspense >
         ),
         errorElement: (
-          <Suspense fallback={<CircularProgress />}>
+          <Suspense fallback={CenterCircularProgress}>
             <ErrorBoundary />
           </Suspense >
         )
@@ -62,7 +76,7 @@ export const router = createHashRouter([
       {
         path: '/login',
         element: (
-          <Suspense fallback={<CircularProgress />}>
+          <Suspense fallback={CenterCircularProgress}>
             <Login />
           </Suspense >
         )
@@ -70,7 +84,7 @@ export const router = createHashRouter([
       {
         path: '/error',
         element: (
-          <Suspense fallback={<CircularProgress />}>
+          <Suspense fallback={CenterCircularProgress}>
             <ErrorBoundary />
           </Suspense >
         )
@@ -78,7 +92,7 @@ export const router = createHashRouter([
       {
         path: '/monitor',
         element: (
-          <Suspense fallback={<CircularProgress />}>
+          <Suspense fallback={CenterCircularProgress}>
             <LiveStream />
           </Suspense >
         )
