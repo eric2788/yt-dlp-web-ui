@@ -22,23 +22,23 @@ const Title = styled(Typography)({
 const ErrorBoundary: React.FC = () => {
   return (
     <FlexContainer>
-      <Title fontWeight={'500'} fontSize={72} color={'gray'}>
+      <Title fontWeight={'500'} fontSize={72} color={'gray'} textAlign={'center'}>
         <SvgIcon sx={{ fontSize: '200px' }}>
           <ErrorIcon />
         </SvgIcon>
       </Title>
-      <Title fontWeight={'500'} fontSize={36} color={'gray'}>
+      <Title fontWeight={'500'} fontSize={36} color={'gray'} textAlign={'center'}>
         An error occurred :\
       </Title>
-      <Title fontWeight={'400'} fontSize={28} color={'gray'}>
+      <Title fontWeight={'400'} fontSize={28} color={'gray'} textAlign={'center'}>
         Check your settings!
       </Title>
-      <Link to={'/settings'} >
+      <Link to={'/settings'}>
         <Button variant='contained' sx={{ mt: 2 }}>
           Goto Settings
         </Button>
       </Link>
-      <Typography sx={{ mt: 2 }} color={'gray'} fontWeight={500}>
+      <Typography sx={{ mt: 2 }} color={'gray'} fontWeight={500} textAlign={'center'}>
         Or login if authentification is enabled
       </Typography>
       <Link to={'/login'} >

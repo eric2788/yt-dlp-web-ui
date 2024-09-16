@@ -36,7 +36,7 @@ export default function Splash() {
           <CloudDownloadIcon />
         </SvgIcon>
       </Title>
-      <Title fontWeight={'500'} fontSize={36} color={'gray'}>
+      <Title fontWeight={'500'} fontSize={36} color={'gray'} textAlign={'center'}>
         {i18n.t('splashText')}
       </Title>
     </FlexContainer>
