@@ -5,7 +5,6 @@ import (
 	"flag"
 	"io/fs"
 	"log"
-	"log/slog"
 	"os"
 	"runtime"
 
@@ -93,13 +92,6 @@ func main() {
 		c.Password = password
 	}
 
-	// if download path not found, create it
-	if err := os.MkdirAll(c.DownloadPath, 0755); err != nil {
-		log.Println(cli.BgRed, "downloadPath", cli.Reset, err)
-	} else {
-		slog.Info("successfully created download path", slog.String("path", c.DownloadPath))
-	}
-
 	// limit concurrent downloads for systems with 2 or less logical cores
 	if runtime.NumCPU() <= 2 {
 		c.QueueSize = 1
@@ -111,6 +103,15 @@ func main() {
 	}
 
 	openid.Configure()
+
+	// if download path not found, create it
+	if _, err := os.Stat(c.DownloadPath); os.IsNotExist(err) {
+		if err := os.MkdirAll(c.DownloadPath, 0755); err != nil {
+			log.Println(cli.BgRed, "downloadPath", cli.Reset, err)
+		} else {
+			log.Println(cli.BgGreen, "SUCCESS", cli.Reset, "successfully created downloadPath at", downloadPath)
+		}
+	}
 
 	server.RunBlocking(&server.RunConfig{
 		App:     frontend,
