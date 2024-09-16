@@ -61,6 +61,7 @@ jobs:
            docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/yt-dlp-webui
           tags: |
             type=raw,value=latest
+            type=edge,value=${{ github.sha }}
 
       - name: Build and push Docker image
         id: build-and-push
