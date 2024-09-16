@@ -30,7 +30,7 @@ export default function NoLivestreams() {
           <LiveTvIcon />
         </SvgIcon>
       </Title>
-      <Title fontWeight={'500'} fontSize={36} color={'gray'}>
+      <Title fontWeight={'500'} fontSize={36} color={'gray'} textAlign={'center'}>
         No livestreams monitored
       </Title>
     </FlexContainer>
