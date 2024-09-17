@@ -63,16 +63,22 @@ jobs:
             type=raw,value=latest
             type=edge,value=${{ github.sha }}
 
+      - name: Take 8 length commit hash
+        id: commit_hash
+        run: 'echo "HEAD_HASH=${GITHUB_SHA:0:8}" >> $GITHUB_OUTPUT'
+
       - name: Build and push Docker image
         id: build-and-push
         # v4.2.1
-        uses: docker/build-push-action@0a97817b6ade9f46837855d676c4cca3a2471fc9
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: true
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels}}
+        env:
+          HEAD_HASH: ${{ steps.commit_hash.outputs.HEAD_HASH }}
 
       - name: Sign the published Docker image
         env:

@@ -4,6 +4,14 @@ import { defineConfig } from 'vite'
 import million from 'million/compiler'
 import react from '@vitejs/plugin-react-swc'
 
+
+// change date to YYYYMMDDHHmmss
+const formatDateStr = (date: Date) => {
+  // make UTC+8
+  date.setHours(date.getHours() + 8)
+  return date.toISOString().replace(/[-:T]/g, '').split('.')[0].substring(0, 12)
+}
+
 export default defineConfig(() => {
   return {
     plugins: [
@@ -65,6 +73,9 @@ export default defineConfig(() => {
     base: '',
     build: {
       emptyOutDir: true,
+    },
+    define: {
+      'process.env.BUILD_TIME': formatDateStr(new Date()),
     }
   }
 })

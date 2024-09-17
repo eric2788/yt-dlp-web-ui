@@ -1,4 +1,4 @@
-import { AppBar, Box, CircularProgress, Divider, Toolbar } from '@mui/material'
+import { AppBar, Box, Chip, CircularProgress, Divider, Toolbar } from '@mui/material'
 
 import DownloadIcon from '@mui/icons-material/Download'
 import FreeSpaceIndicator from './FreeSpaceIndicator'
@@ -44,10 +44,19 @@ const Footer: React.FC = () => {
         justifyContent: 'space-between',
         flexDirection: { xs: 'column', md: 'row' },
       }}>
-        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+        <Box sx={(theme) => ({
+          display: 'flex',
+          gap: 1,
+          alignItems: 'center',
+          [theme.breakpoints.down(450)]: {
+            overflowX: 'auto',
+            width: '100%'
+          }
+        })}>
           <Suspense fallback={<CircularProgress size={15} />}>
             <VersionIndicator />
           </Suspense>
+          <Chip label={`build ${process.env.HEAD_HASH || process.env.BUILD_TIME || 'dev'}`} variant="outlined" size="small" />
         </Box>
         <Box sx={{
           display: 'flex',
@@ -62,14 +71,14 @@ const Footer: React.FC = () => {
               {formatSpeedMiB(totalDownloadSpeed)}
             </span>
           </Box>
-          <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', ms: 'inline' } }} />
-          <Box sx={{ display: { ms: 'flex', xs: 'none' }, gap: 0.5, flexGrow: 2, justifyContent: 'end' }}>
+          <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', md: 'inline' } }} />
+          <Box sx={{ display: { md: 'flex', xs: 'none' }, gap: 0.5, flexGrow: 2, justifyContent: 'end' }}>
             <SettingsEthernet />
             <span>
               {isConnected ? settings.serverAddr : i18n.t('notConnectedText')}
             </span>
           </Box>
-          <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', ms: 'inline' } }} />
+          <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', md: 'inline' } }} />
           <Box sx={{ display: 'flex', gap: 0.5 }}>
             <Suspense fallback={i18n.t('loadingLabel')}>
               <FreeSpaceIndicator />
