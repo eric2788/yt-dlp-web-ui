@@ -14,10 +14,10 @@ export const useRPC = () => {
 }
 
 
-export function useRPCOperation(func: (re: RPCResult, c: RPCClient) => Promise<any>): [(re: RPCResult) => Promise<void>, boolean] {
+export function useRPCOperation<R = RPCResult>(func: (re: R, c: RPCClient) => Promise<any>): [(re: R) => Promise<void>, boolean] {
   const { client } = useRPC()
   const [ loading, setLoading ] = useState(false)
-  const f = useCallback((re: RPCResult) => {
+  const f = useCallback((re: R) => {
     setLoading(true)
     return func(re, client).finally(() => setLoading(false))
   }, [])

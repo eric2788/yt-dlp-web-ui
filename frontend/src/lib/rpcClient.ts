@@ -71,9 +71,9 @@ export class RPCClient {
     return new Promise<RPCResult[]>((resolve, reject) => {
       const subscribe = this._socket$.asObservable().subscribe(
         (data: RPCResponse<RPCResult[]>) => {
-          if (data.error) {
+          if (data.error !== null) {
             subscribe.unsubscribe()
-            reject(data.error)
+            reject(new Error(`Error Code ${data.error}: ${JSON.stringify(data.result)}`))
           } else if (until(data.result)) {
             subscribe.unsubscribe()
             resolve(data.result)
