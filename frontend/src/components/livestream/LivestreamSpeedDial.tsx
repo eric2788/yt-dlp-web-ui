@@ -1,6 +1,7 @@
+import { SpeedDial, SpeedDialAction, SpeedDialIcon } from '@mui/material'
+
 import AddCircleIcon from '@mui/icons-material/AddCircle'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
-import { SpeedDial, SpeedDialAction, SpeedDialIcon } from '@mui/material'
 import { useI18n } from '../../hooks/useI18n'
 
 type Props = {
@@ -14,7 +15,7 @@ const LivestreamSpeedDial: React.FC<Props> = ({ onOpen, onStopAll }) => {
   return (
     <SpeedDial
       ariaLabel="Home speed dial"
-      sx={{ position: 'fixed', bottom: 64, right: 24 }}
+      sx={{ position: 'fixed', bottom: 64, right: 24, zIndex: { sm: 1201, xs: 1001 } }}
       icon={<SpeedDialIcon />}
     >
       <SpeedDialAction

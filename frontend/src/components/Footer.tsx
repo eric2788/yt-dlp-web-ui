@@ -24,7 +24,7 @@ const Footer: React.FC = () => {
     <AppBar position="fixed" color="default" sx={{
       top: 'auto',
       bottom: 0,
-      zIndex: 1000,
+      zIndex: { xs: 1000, sm: 1200 },
       borderTop: mode === 'light'
         ? '1px solid rgba(0, 0, 0, 0.12)'
         : '1px solid rgba(255, 255, 255, 0.12)',
@@ -32,7 +32,7 @@ const Footer: React.FC = () => {
       flexDirection: 'column',
       justifyContent: 'center',
       height: { md: 48 },
-      
+
     }}>
       <Toolbar sx={{
         fontSize: 14,
@@ -44,38 +44,40 @@ const Footer: React.FC = () => {
         justifyContent: 'space-between',
         flexDirection: { xs: 'column', md: 'row' },
       }}>
-        <Suspense fallback={<CircularProgress size={15} />}>
-          <VersionIndicator />
-        </Suspense>
-        <div style={{ display: 'flex', gap: 4, 'alignItems': 'center' }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            marginRight: 'px',
-            gap: 3,
-          }}>
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+          <Suspense fallback={<CircularProgress size={15} />}>
+            <VersionIndicator />
+          </Suspense>
+        </Box>
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 1,
+          width: { xs: '100%', md: 'auto' },
+        }}>
+          <Box sx={{ display: 'flex', gap: 0.5 }}>
             <DownloadIcon />
             <span>
               {formatSpeedMiB(totalDownloadSpeed)}
             </span>
-          </div>
-          <Divider orientation="vertical" flexItem />
-          <Box sx={{ display: 'flex', gap: 0.5, flexGrow: 2, justifyContent: 'end' }}>
+          </Box>
+          <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', ms: 'inline' } }} />
+          <Box sx={{ display: { ms: 'flex', xs: 'none' }, gap: 0.5, flexGrow: 2, justifyContent: 'end' }}>
             <SettingsEthernet />
             <span>
               {isConnected ? settings.serverAddr : i18n.t('notConnectedText')}
             </span>
           </Box>
-          <Divider orientation="vertical" flexItem />
+          <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', ms: 'inline' } }} />
           <Box sx={{ display: 'flex', gap: 0.5 }}>
             <Suspense fallback={i18n.t('loadingLabel')}>
               <FreeSpaceIndicator />
             </Suspense>
           </Box>
-        </div>
-      </Toolbar>
-    </AppBar>
+        </Box>
+      </Toolbar >
+    </AppBar >
   )
 }
 

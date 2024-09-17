@@ -1,34 +1,46 @@
-import { ThemeProvider } from '@emotion/react'
+import { Box, createTheme, useMediaQuery } from '@mui/material'
+import { Link, Outlet } from 'react-router-dom'
+import { useMemo, useState } from 'react'
+
+import AppBar from './components/AppBar'
 import ArchiveIcon from '@mui/icons-material/Archive'
 import ChevronLeft from '@mui/icons-material/ChevronLeft'
-import Dashboard from '@mui/icons-material/Dashboard'
-import LiveTvIcon from '@mui/icons-material/LiveTv'
-import Menu from '@mui/icons-material/Menu'
-import SettingsIcon from '@mui/icons-material/Settings'
-import TerminalIcon from '@mui/icons-material/Terminal'
-import { Box, createTheme, useMediaQuery } from '@mui/material'
 import CssBaseline from '@mui/material/CssBaseline'
+import Dashboard from '@mui/icons-material/Dashboard'
 import Divider from '@mui/material/Divider'
+import Drawer from './components/Drawer'
+import Footer from './components/Footer'
 import IconButton from '@mui/material/IconButton'
 import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
+import LiveTvIcon from '@mui/icons-material/LiveTv'
+import Logout from './components/Logout'
+import Menu from '@mui/icons-material/Menu'
+import SettingsIcon from '@mui/icons-material/Settings'
+import SocketSubscriber from './components/SocketSubscriber'
+import TerminalIcon from '@mui/icons-material/Terminal'
+import { ThemeProvider } from '@emotion/react'
+import ThemeToggler from './components/ThemeToggler'
+import Toaster from './providers/ToasterProvider'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import { grey } from '@mui/material/colors'
-import { useMemo, useState } from 'react'
-import { Link, Outlet } from 'react-router-dom'
-import { useRecoilValue } from 'recoil'
 import { settingsState } from './atoms/settings'
-import AppBar from './components/AppBar'
-import Drawer from './components/Drawer'
-import Footer from './components/Footer'
-import Logout from './components/Logout'
-import SocketSubscriber from './components/SocketSubscriber'
-import ThemeToggler from './components/ThemeToggler'
 import { useI18n } from './hooks/useI18n'
-import Toaster from './providers/ToasterProvider'
+import { useRecoilValue } from 'recoil'
+
+declare module '@mui/material/styles' {
+  interface BreakpointOverrides {
+    xs: true;
+    ms: true;
+    sm: true;
+    md: true;
+    lg: true;
+    xl: true;
+  }
+}
 
 export default function Layout() {
   const [open, setOpen] = useState(false)
@@ -42,6 +54,16 @@ export default function Layout() {
         mode: settings.theme,
         background: {
           default: settings.theme === 'light' ? grey[50] : '#121212'
+        },
+      },
+      breakpoints: {
+        values: {
+          xs: 0,
+          ms: 350,
+          sm: 600,
+          md: 900,
+          lg: 1200,
+          xl: 1536,
         },
       },
     }), [settings.theme]

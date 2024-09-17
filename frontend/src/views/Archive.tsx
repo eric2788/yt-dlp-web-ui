@@ -25,26 +25,25 @@ import {
   Typography,
   useMediaQuery
 } from '@mui/material'
+import { BehaviorSubject, Subject, combineLatestWith, map, share } from 'rxjs'
+import { base64URLEncode, formatSize } from '../utils'
+import { useEffect, useMemo, useState, useTransition } from 'react'
 
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
+import { DirectoryEntry } from '../types'
+import DownloadIcon from '@mui/icons-material/Download'
 import FolderIcon from '@mui/icons-material/Folder'
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 import VideoFileIcon from '@mui/icons-material/VideoFile'
-
-import DownloadIcon from '@mui/icons-material/Download'
+import { ffetch } from '../lib/httpClient'
 import { matchW } from 'fp-ts/lib/TaskEither'
 import { pipe } from 'fp-ts/lib/function'
-import { useEffect, useMemo, useState, useTransition } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useRecoilValue } from 'recoil'
-import { BehaviorSubject, Subject, combineLatestWith, map, share } from 'rxjs'
 import { serverURL } from '../atoms/settings'
-import { useObservable } from '../hooks/observable'
-import { useToast } from '../hooks/toast'
 import { useI18n } from '../hooks/useI18n'
-import { ffetch } from '../lib/httpClient'
-import { DirectoryEntry } from '../types'
-import { base64URLEncode, formatSize } from '../utils'
+import { useNavigate } from 'react-router-dom'
+import { useObservable } from '../hooks/observable'
+import { useRecoilValue } from 'recoil'
+import { useToast } from '../hooks/toast'
 
 export default function Downloaded() {
   const [menuPos, setMenuPos] = useState({ x: 0, y: 0 })
@@ -296,7 +295,7 @@ export default function Downloaded() {
       </Paper>
       <SpeedDial
         ariaLabel='archive actions'
-        sx={{ position: 'fixed', bottom: 64, right: 24 }}
+        sx={{ position: 'fixed', bottom: 64, right: 24, zIndex: { sm: 1201, xs: 1001 } }}
         icon={<SpeedDialIcon />}
       >
         <SpeedDialAction
