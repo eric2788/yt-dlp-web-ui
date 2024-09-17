@@ -1,7 +1,7 @@
-import { Observable } from 'rxjs'
 import type { DLMetadata, LiveStreamProgress, RPCRequest, RPCResponse, RPCResult } from '../types'
-
 import { WebSocketSubject, webSocket } from 'rxjs/webSocket'
+
+import { Observable } from 'rxjs'
 
 type DownloadRequestArgs = {
   url: string,
@@ -10,6 +10,8 @@ type DownloadRequestArgs = {
   renameTo?: string,
   playlist?: boolean
 }
+
+type WaitUntil = (result: RPCResult[]) => boolean
 
 export class RPCClient {
   private seq: number
@@ -64,25 +66,24 @@ export class RPCClient {
     return data
   }
 
-  private async sendHTTPAndWait<T>(req: RPCRequest, timeout: number = 30000): Promise<RPCResult[]> {
-    const res = await this.sendHTTP<T>(req)
-    return new Promise<RPCResult[]>((reslove, reject) => {
-      const subscribe = this._socket$.subscribe(
+  private async sendHTTPAndWait<T>(req: RPCRequest, until: WaitUntil, timeout: number = 10000): Promise<RPCResult[]> {
+    await this.sendHTTP<T>(req)
+    return new Promise<RPCResult[]>((resolve, reject) => {
+      const subscribe = this._socket$.asObservable().subscribe(
         (data: RPCResponse<RPCResult[]>) => {
-          if (data.id === res.id) {
+          if (data.error) {
             subscribe.unsubscribe()
-            if (data.error) {
-              reject(data.error)
-            } else {
-              reslove(data.result)
-            }
+            reject(data.error)
+          } else if (until(data.result)) {
+            subscribe.unsubscribe()
+            resolve(data.result)
           }
         }
       )
       if (timeout > 0) {
         setTimeout(() => {
           subscribe.unsubscribe()
-          reject('timeout')
+          reject(new Error('Timeout'))
         }, timeout)
       }
     })
@@ -151,18 +152,18 @@ export class RPCClient {
     })
   }
 
-  public kill(id: string) {
-    this.sendHTTP({
+  public async kill(id: string) {
+    return this.sendHTTPAndWait({
       method: 'Service.Kill',
       params: [id],
-    })
+    }, (results) => results.every(r => r.id !== id))
   }
 
-  public clear(id: string) {
-    this.sendHTTP({
+  public async clear(id: string) {
+    return this.sendHTTPAndWait({
       method: 'Service.Clear',
       params: [id],
-    })
+    }, (results) => results.every(r => r.id !== id))
   }
 
   public killAll() {
@@ -203,17 +204,17 @@ export class RPCClient {
   }
 
   public killLivestream(url: string) {
-    return this.sendHTTP({
+    return this.sendHTTPAndWait({
       method: 'Service.KillLivestream',
       params: [url]
-    })
+    }, (results) => results.every(r => r.info.url !== url))
   }
 
   public killAllLivestream() {
-    return this.sendHTTP({
+    return this.sendHTTPAndWait({
       method: 'Service.KillAllLivestream',
       params: []
-    })
+    }, (results) => results.every(r => r.progress.process_status === 2))
   }
 
   public updateExecutable() {

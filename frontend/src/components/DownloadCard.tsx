@@ -1,7 +1,3 @@
-import EightK from '@mui/icons-material/EightK'
-import FourK from '@mui/icons-material/FourK'
-import Hd from '@mui/icons-material/Hd'
-import Sd from '@mui/icons-material/Sd'
 import {
   Box,
   Button,
@@ -17,16 +13,22 @@ import {
   Stack,
   Typography
 } from '@mui/material'
-import { useCallback } from 'react'
-import { useRecoilValue } from 'recoil'
-import { serverURL } from '../atoms/settings'
-import { RPCResult } from '../types'
+import { ProcessStatus, RPCResult } from '../types'
 import { base64URLEncode, ellipsis, formatSize, formatSpeedMiB, mapProcessStatus } from '../utils'
+
+import EightK from '@mui/icons-material/EightK'
+import FourK from '@mui/icons-material/FourK'
+import Hd from '@mui/icons-material/Hd'
+import Sd from '@mui/icons-material/Sd'
+import { serverURL } from '../atoms/settings'
 import styled from '@emotion/styled'
+import { useCallback } from 'react'
+import { useRPCOperation } from '../hooks/useRPC'
+import { useRecoilValue } from 'recoil'
+import { useToast } from '../hooks/toast'
 
 type Props = {
   download: RPCResult
-  onStop: () => void
   onCopy: () => void
 }
 
@@ -46,7 +48,7 @@ const FlexColGrowBox = styled(Box)`
   justify-content: space-between;
 `
 
-const DownloadCard: React.FC<Props> = ({ download, onStop, onCopy }) => {
+const DownloadCard: React.FC<Props> = ({ download, onCopy }) => {
   const serverAddr = useRecoilValue(serverURL)
 
   const isCompleted = useCallback(
@@ -71,6 +73,14 @@ const DownloadCard: React.FC<Props> = ({ download, onStop, onCopy }) => {
     window.open(`${serverAddr}/archive/d/${encoded}?token=${localStorage.getItem('token')}`)
   }
 
+  const [stop, loading] = useRPCOperation(
+    (r, client) => r.progress.process_status === ProcessStatus.COMPLETED
+    ? client.clear(r.id)
+    : client.kill(r.id)
+  )
+
+  const { pushMessage } = useToast()
+  
   return (
     <Paper elevation={3} sx={{
       display: 'flex',
@@ -78,7 +88,7 @@ const DownloadCard: React.FC<Props> = ({ download, onStop, onCopy }) => {
       flexDirection: 'column',
       height: '100%',
     }}>
-      <Box>
+      <Box onClick={onCopy} sx={{ cursor: 'pointer'}}>
         {download.info.thumbnail !== '' ?
           <CardMedia
             component="img"
@@ -126,16 +136,23 @@ const DownloadCard: React.FC<Props> = ({ download, onStop, onCopy }) => {
         </FlexColGrowBox>
         <Box sx={{ display: 'flex', flexDirection: { sm: 'row', xs: 'column' }, gap: 1 }}>
           <Button
+            disabled={loading}
             variant="contained"
             size="small"
             color="primary"
-            onClick={onStop}
+            onClick={() => {
+              pushMessage(isCompleted() ? "Clearing..." : "Stopping...", "info")
+              stop(download)
+                .then(() => pushMessage(isCompleted() ? "Cleared Successfully" : "Stopped Successfully"))
+                .catch(err => pushMessage(err.message, "error"))
+            }}
           >
             {isCompleted() ? "Clear" : "Stop"}
           </Button>
           {isCompleted() &&
             <>
               <Button
+                disabled={loading}
                 variant="contained"
                 size="small"
                 color="primary"
@@ -144,6 +161,7 @@ const DownloadCard: React.FC<Props> = ({ download, onStop, onCopy }) => {
                 Download
               </Button>
               <Button
+                disabled={loading}
                 variant="contained"
                 size="small"
                 color="primary"
