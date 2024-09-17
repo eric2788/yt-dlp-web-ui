@@ -4,18 +4,25 @@ import {
   Chip,
   Container,
   Paper,
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow
 } from '@mui/material'
-import { useState } from 'react'
-import { interval } from 'rxjs'
+import { LiveStreamProgress, LiveStreamStatus, ProcessStatus } from '../types'
+import { useRPC, useRPCOperation } from '../hooks/useRPC'
+
 import LivestreamDialog from '../components/livestream/LivestreamDialog'
 import LivestreamSpeedDial from '../components/livestream/LivestreamSpeedDial'
-import NoLivestreams from '../components/livestream/NoLivestreams'
 import LoadingBackdrop from '../components/LoadingBackdrop'
-import { useSubscription } from '../hooks/observable'
+import NoLivestreams from '../components/livestream/NoLivestreams'
+import { interval } from 'rxjs'
 import { useI18n } from '../hooks/useI18n'
-import { useRPC } from '../hooks/useRPC'
-import { LiveStreamProgress, LiveStreamStatus } from '../types'
+import { useState } from 'react'
+import { useSubscription } from '../hooks/observable'
+import { useToast } from '../hooks/toast'
 
 const LiveStreamMonitorView: React.FC = () => {
   const { i18n } = useI18n()
@@ -63,14 +70,25 @@ const LiveStreamMonitorView: React.FC = () => {
     }
   }
 
-  const stopAll = () => client.killAllLivestream()
-  const stop = (url: string) => client.killLivestream(url)
+  const { pushMessage } = useToast()
+
+  const [stop, loading] = useRPCOperation<string | undefined>(
+    (url, c) => url ? c.killLivestream(url) : c.killAllLivestream()
+  )
 
   return (
     <>
       <LoadingBackdrop isLoading={!progress} />
 
-      <LivestreamSpeedDial onOpen={() => setOpenDialog(s => !s)} onStopAll={stopAll} />
+      <LivestreamSpeedDial
+        onOpen={() => setOpenDialog(s => !s)}
+        onStopAll={() => {
+          pushMessage('Stopping all live streams...', 'info')
+          stop(undefined)
+            .then(() => pushMessage('All live streams stopped', 'success'))
+            .catch(err => pushMessage(err.message, 'error'))
+        }} 
+      />
       <LivestreamDialog open={openDialog} onClose={() => setOpenDialog(s => !s)} />
 
       {!progress || Object.keys(progress).length === 0 ?
@@ -116,7 +134,12 @@ const LiveStreamMonitorView: React.FC = () => {
                         }
                       </TableCell>
                       <TableCell align='right'>
-                        <Button variant='contained' size='small' onClick={() => stop(k)}>
+                        <Button disabled={loading} variant='contained' size='small' onClick={() => {
+                          pushMessage('Stopping live stream...', 'info')
+                          stop(k)
+                            .then(() => pushMessage('Live stream stopped', 'success'))
+                            .catch(err => pushMessage(err.message, 'error'))
+                        }}>
                           Stop
                         </Button>
                       </TableCell>
