@@ -71,7 +71,6 @@ const LiveStreamMonitorView: React.FC = () => {
   }
 
   const { pushMessage } = useToast()
-
   const [stop, loading] = useRPCOperation<string | undefined>(
     (url, c) => url ? c.killLivestream(url) : c.killAllLivestream()
   )
@@ -83,9 +82,9 @@ const LiveStreamMonitorView: React.FC = () => {
       <LivestreamSpeedDial
         onOpen={() => setOpenDialog(s => !s)}
         onStopAll={() => {
-          pushMessage('Stopping all live streams...', 'info')
+          pushMessage(i18n.t('livestreamStoppingAll'), 'info')
           stop(undefined)
-            .then(() => pushMessage('All live streams stopped', 'success'))
+            .then(() => pushMessage(i18n.t('livestreamStoppedAll'), 'success'))
             .catch(err => pushMessage(err.message, 'error'))
         }} 
       />
@@ -135,9 +134,9 @@ const LiveStreamMonitorView: React.FC = () => {
                       </TableCell>
                       <TableCell align='right'>
                         <Button disabled={loading} variant='contained' size='small' onClick={() => {
-                          pushMessage('Stopping live stream...', 'info')
+                          pushMessage(i18n.t('livestreamStopping'), 'info')
                           stop(k)
-                            .then(() => pushMessage('Live stream stopped', 'success'))
+                            .then(() => pushMessage(i18n.t('livestreamStopped'), 'success'))
                             .catch(err => pushMessage(err.message, 'error'))
                         }}>
                           Stop

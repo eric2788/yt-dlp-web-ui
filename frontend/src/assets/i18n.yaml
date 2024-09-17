@@ -7,6 +7,7 @@ languages:
     selectFormatButton: Select format
     startButton: Start
     abortAllButton: Abort All
+    notConnectedText: backend not connected
     updateBinButton: Update yt-dlp binary
     darkThemeButton: Dark theme
     lightThemeButton: Light theme
@@ -31,6 +32,10 @@ languages:
     rpcConnErr: Error while conencting to RPC server
     splashText: No active downloads
     archiveTitle: Archive
+    clearing: Clearing...
+    cleared: Cleared
+    stopping: Stopping...
+    stopped: Stopped
     clipboardAction: Copied URL to clipboard
     playlistCheckbox: Download playlist (it will take time, after submitting you may close this window)
     restartAppMessage: Needs a page reload to take effect
@@ -65,6 +70,10 @@ languages:
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
       Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
+    livestreamStoppingAll: Stopping all livestream downloads
+    livestreamStopping: Stopping livestream download
+    livestreamStoppedAll: All livestream downloads stopped
+    livestreamStopped: Livestream download stopped
   german:
     urlInput: Video URL
     statusTitle: Status
@@ -250,66 +259,79 @@ languages:
       Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
   chinese:
-    urlInput: 视频 URL
-    statusTitle: 状态
-    statusReady: 就绪
-    selectFormatButton: 选择格式
-    startButton: 开始
+    urlInput: 視頻 URL
+    statusTitle: 狀態
+    statusReady: 就緒
+    selectFormatButton: 選擇格式
+    startButton: 開始
     abortAllButton: 全部中止
-    updateBinButton: 更新 yt-dlp 可执行文件
-    darkThemeButton: 黑暗主题
-    lightThemeButton: 明亮主题
-    settingsAnchor: 设置
-    serverAddressTitle: 服务器地址
+    updateBinButton: 更新 yt-dlp 可執行文件
+    darkThemeButton: 黑暗主題
+    lightThemeButton: 明亮主題
+    settingsAnchor: 設置
+    notConnectedText: 後端未連接
+    serverAddressTitle: 服務器地址
     serverPortTitle: 端口
-    extractAudioCheckbox: 提取音频
-    noMTimeCheckbox: 不设置文件修改时间
-    bgReminder: 关闭页面后，下载会继续在后台运行。
-    toastConnected: '已连接到 '
-    toastUpdated: 已更新 yt-dlp 可执行文件！
-    formatSelectionEnabler: 启用视频/音频格式选择
-    themeSelect: '主题'
-    languageSelect: '语言'
-    overridesAnchor: 覆盖
-    pathOverrideOption: 启用输出路径覆盖
-    filenameOverrideOption: 启用输出文件名覆盖
-    customFilename: 自定义文件名（留空使用默认值）
-    customPath: 自定义路径
-    customArgs: 启用自定义 yt-dlp 参数（能力越大 = 责任越大）
-    customArgsInput: 自定义 yt-dlp 参数
-    rpcConnErr: 连接 RPC 服务器发生错误
-    splashText: 没有正在进行的下载
-    archiveTitle: 归档
-    clipboardAction: 复制 URL 到剪贴板
-    playlistCheckbox: 下载播放列表（可能需要一段时间，提交后可以关闭页面等待）
-    restartAppMessage: 需要刷新页面才能生效
-    servedFromReverseProxyCheckbox: 处于反向代理的子目录后
-    newDownloadButton: 新下载
-    homeButtonLabel: 主页
-    archiveButtonLabel: 归档
-    settingsButtonLabel: 设置
-    rpcAuthenticationLabel: RPC 身份验证
-    themeTogglerLabel: 主题切换
-    loadingLabel: 正在加载…
-    appTitle: App 标题
+    extractAudioCheckbox: 提取音頻
+    noMTimeCheckbox: 不設置文件修改時間
+    bgReminder: 關閉頁面後，下載會繼續在後台運行。
+    toastConnected: '已連接到 '
+    toastUpdated: 已更新 yt-dlp 可執行文件！
+    formatSelectionEnabler: 啟用視頻/音頻格式選擇
+    themeSelect: '主題'
+    languageSelect: '語言'
+    overridesAnchor: 覆蓋
+    pathOverrideOption: 啟用輸出路徑覆蓋
+    filenameOverrideOption: 啟用輸出文件名覆蓋
+    customFilename: 自定義文件名（留空使用默認值）
+    customPath: 自定義路徑
+    customArgs: 啟用自定義 yt-dlp 參數（能力越大 = 責任越大）
+    customArgsInput: 自定義 yt-dlp 參數
+    rpcConnErr: 連接 RPC 服務器發生錯誤
+    splashText: 沒有正在進行的下載
+    archiveTitle: 歸檔
+    clipboardAction: 覆制 URL 到剪貼板
+    playlistCheckbox: 下載播放列表（可能需要一段時間，提交後可以關閉頁面等待）
+    restartAppMessage: 需要刷新頁面才能生效
+    servedFromReverseProxyCheckbox: 處於反向代理的子目錄後
+    urlBase: URL 基礎路徑，用於反向代理支持（子目錄），默認為空
+    clearing: 清除中…
+    cleared: 已清除
+    stopping: 正在停止…
+    stopped: 已停止
+    newDownloadButton: 新下載
+    homeButtonLabel: 主頁
+    archiveButtonLabel: 歸檔
+    settingsButtonLabel: 設置
+    rpcAuthenticationLabel: RPC 身份驗證
+    themeTogglerLabel: 主題切換
+    loadingLabel: 正在加載…
+    appTitle: App 標題
     savedTemplates: 保存模板
-    templatesEditor: 模板编辑器
-    templatesEditorNameLabel: 模板名称
-    templatesEditorContentLabel: 模板内容
+    templatesEditor: 模板編輯器
+    templatesEditorNameLabel: 模板名稱
+    templatesEditorContentLabel: 模板內容
     logsTitle: '日志'
     awaitingLogs: '正在等待日志…'
-    bulkDownload: '下载 zip 压缩包中的文件'
+    bulkDownload: '下載 zip 壓縮包中的文件'
+    rpcPollingTimeTitle: RPC 輪詢時間
+    rpcPollingTimeDescription: 較低的間隔會導致更高的 CPU 使用率（服務器和客戶端）
+    templatesReloadInfo: 要注冊新模板，可能需要重新加載頁面。
     livestreamURLInput: 直播 URL
-    livestreamStatusWaiting: 等待直播开始
-    livestreamStatusDownloading: 下载中
+    livestreamStatusWaiting: 等待直播開始
+    livestreamStatusDownloading: 下載中
     livestreamStatusCompleted: 已完成
-    livestreamStatusErrored: 发生错误
+    livestreamStatusErrored: 發生錯誤
     livestreamStatusUnknown: 未知
     livestreamDownloadInfo: |
-      本功能将会监控即将开始的直播流，每个进程都会传入参数：--wait-for-video 10 （重试间隔10秒）
-      如果直播已经开始，那么依然可以下载，但是不会记录下载进度。
-      直播开始后，将会转移到下载页面
-    livestreamExperimentalWarning: 实验性功能，可能存在未知Bug，请谨慎使用
+      本功能將會監控即將開始的直播流，每個進程都會傳入參數：--wait-for-video 10 （重試間隔10秒）
+      如果直播已經開始，那麽依然可以下載，但是不會記錄下載進度。
+      直播開始後，將會轉移到下載頁面
+    livestreamExperimentalWarning: 實驗性功能，可能存在未知Bug，請謹慎使用
+    livestreamStoppingAll: 正在停止所有直播下載
+    livestreamStopping: 正在停止直播下載
+    livestreamStoppedAll: 所有直播下載已停止
+    livestreamStopped: 直播下載已停止
   spanish:
     urlInput: URL de YouTube u otro servicio compatible
     statusTitle: Estado

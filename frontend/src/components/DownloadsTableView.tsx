@@ -30,6 +30,7 @@ import { loadingAtom } from '../atoms/ui';
 import { serverURL } from '../atoms/settings'
 import { useRecoilValue } from 'recoil'
 import { useToast } from "../hooks/toast";
+import { useI18n } from "../hooks/useI18n";
 
 const columns = [
   {
@@ -148,6 +149,8 @@ function DownloadsTableRow(download: RPCResult) {
     [download.progress.percentage]
   )
 
+  const { i18n } = useI18n()
+
   return (
     <>
     <TableCell>
@@ -184,9 +187,9 @@ function DownloadsTableRow(download: RPCResult) {
           size="small"
           disabled={loading}
           onClick={() => {
-            pushMessage(isCompleted() ? 'Clearing...' : 'Stopping...', 'info')
+            pushMessage(isCompleted() ? i18n.t('clearing') : i18n.t('stopping'), 'info')
             stop(download)
-              .then(() => pushMessage(isCompleted() ? 'Cleared Successfully' : 'Stopped Successfully'))
+              .then(() => pushMessage(isCompleted() ? i18n.t('cleared') : i18n.t('stopped'), 'success'))
               .catch(err => pushMessage(err.message, "error"))
           }}
         >

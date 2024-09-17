@@ -26,6 +26,7 @@ import { useCallback } from 'react'
 import { useRPCOperation } from '../hooks/useRPC'
 import { useRecoilValue } from 'recoil'
 import { useToast } from '../hooks/toast'
+import { useI18n } from "../hooks/useI18n"
 
 type Props = {
   download: RPCResult
@@ -75,12 +76,13 @@ const DownloadCard: React.FC<Props> = ({ download, onCopy }) => {
 
   const [stop, loading] = useRPCOperation(
     (r, client) => r.progress.process_status === ProcessStatus.COMPLETED
-    ? client.clear(r.id)
-    : client.kill(r.id)
+      ? client.clear(r.id)
+      : client.kill(r.id)
   )
 
   const { pushMessage } = useToast()
-  
+  const { i18n } = useI18n()
+
   return (
     <Paper elevation={3} sx={{
       display: 'flex',
@@ -88,7 +90,7 @@ const DownloadCard: React.FC<Props> = ({ download, onCopy }) => {
       flexDirection: 'column',
       height: '100%',
     }}>
-      <Box onClick={onCopy} sx={{ cursor: 'pointer'}}>
+      <Box onClick={onCopy} sx={{ cursor: 'pointer' }}>
         {download.info.thumbnail !== '' ?
           <CardMedia
             component="img"
@@ -141,9 +143,9 @@ const DownloadCard: React.FC<Props> = ({ download, onCopy }) => {
             size="small"
             color="primary"
             onClick={() => {
-              pushMessage(isCompleted() ? "Clearing..." : "Stopping...", "info")
+              pushMessage(isCompleted() ? i18n.t('clearing') : i18n.t('stopping'), 'info')
               stop(download)
-                .then(() => pushMessage(isCompleted() ? "Cleared Successfully" : "Stopped Successfully"))
+                .then(() => pushMessage(isCompleted() ? i18n.t('cleared') : i18n.t('stopped'), 'success'))
                 .catch(err => pushMessage(err.message, "error"))
             }}
           >
