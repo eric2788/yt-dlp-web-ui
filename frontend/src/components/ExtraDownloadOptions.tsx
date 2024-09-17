@@ -1,6 +1,7 @@
 import { Autocomplete, Box, TextField, Typography } from '@mui/material'
-import { useRecoilState, useRecoilValue } from 'recoil'
 import { customArgsState, savedTemplatesState } from '../atoms/downloadTemplate'
+import { useRecoilState, useRecoilValue } from 'recoil'
+
 import { useI18n } from '../hooks/useI18n'
 
 const ExtraDownloadOptions: React.FC = () => {
@@ -21,12 +22,14 @@ const ExtraDownloadOptions: React.FC = () => {
             .map(({ name, content }) => ({ label: name, content }))
             .at(0)
         }
+        isOptionEqualToValue={(option, value) => option.label === value.label}
         getOptionLabel={(option) => option.label}
         onChange={(_, value) => {
           setCustomArgs(value?.content!)
         }}
         renderOption={(props, option) => (
           <Box
+            key={option.label}
             component="li"
             {...props}
           >
