@@ -3,6 +3,7 @@
 result/
 result
 dist
+dev-dist
 .pnpm-debug.log
 node_modules
 .env

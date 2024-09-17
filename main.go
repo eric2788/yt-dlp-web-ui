@@ -34,8 +34,8 @@ var (
 	logFile           string
 	enableFileLogging bool
 
-	//go:embed frontend/dist/index.html
 	//go:embed frontend/dist/assets/*
+	//go:embed frontend/dist/*
 	frontend embed.FS
 
 	//go:embed openapi/*

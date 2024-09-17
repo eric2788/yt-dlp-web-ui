@@ -1,6 +1,6 @@
 import { Box, createTheme, useMediaQuery } from '@mui/material'
 import { Link, Outlet } from 'react-router-dom'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import AppBar from './components/AppBar'
 import ArchiveIcon from '@mui/icons-material/Archive'
@@ -30,6 +30,8 @@ import { grey } from '@mui/material/colors'
 import { settingsState } from './atoms/settings'
 import { useI18n } from './hooks/useI18n'
 import { useRecoilValue } from 'recoil'
+import { useToast } from "./hooks/toast"
+import { GetApp } from "@mui/icons-material"
 
 declare module '@mui/material/styles' {
   interface BreakpointOverrides {
@@ -72,8 +74,31 @@ export default function Layout() {
   const toggleDrawer = () => setOpen(state => !state)
 
   const { i18n } = useI18n()
-
+  const { pushMessage } = useToast()
   const upSm = useMediaQuery(theme.breakpoints.up('sm'))
+
+  const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null)
+
+  // PWA prompt
+  useEffect(() => {
+    window.addEventListener('beforeinstallprompt', (e: BeforeInstallPromptEvent) => {
+      console.log('beforeinstallprompt triggered: ', e)
+      setInstallEvent(e)
+    })
+  }, [])
+
+  const handleInstall = async () => {
+    if (installEvent !== null) {
+      installEvent.prompt()
+      const choiceResult = await installEvent.userChoice
+      if (choiceResult.outcome === 'accepted') {
+        pushMessage('App installed successfully', 'success')
+      } else {
+        console.info('User dismissed the A2HS prompt')
+      }
+      setInstallEvent(null)
+    }
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -99,7 +124,7 @@ export default function Layout() {
               variant="h6"
               color="inherit"
               noWrap
-              
+
             >
               {settings.appTitle}
             </Typography>
@@ -185,6 +210,14 @@ export default function Layout() {
                 <ListItemText primary={i18n.t('settingsButtonLabel')} />
               </ListItemButton>
             </Link>
+            {installEvent && (
+              <ListItemButton onClick={handleInstall}>
+                <ListItemIcon>
+                  <GetApp />
+                </ListItemIcon>
+                <ListItemText primary="Install App" />
+              </ListItemButton>
+            )}
             <ThemeToggler />
             <Logout />
           </List>
