@@ -16,7 +16,8 @@ import {
   Switch,
   TextField,
   Typography,
-  capitalize
+  capitalize,
+  useMediaQuery
 } from '@mui/material'
 import { Suspense, useEffect, useMemo, useState } from 'react'
 import { useRecoilState } from 'recoil'
@@ -49,6 +50,7 @@ import { useToast } from '../hooks/toast'
 import { useI18n } from '../hooks/useI18n'
 import { useRPC } from '../hooks/useRPC'
 import { validateDomain, validateIP } from '../utils'
+import type { Theme as MuiTheme } from "@mui/material"
 
 // NEED ABSOLUTELY TO BE SPLIT IN MULTIPLE COMPONENTS
 export default function Settings() {
@@ -79,6 +81,7 @@ export default function Settings() {
   const baseURL$ = useMemo(() => new Subject<string>(), [])
   const serverAddr$ = useMemo(() => new Subject<string>(), [])
   const serverPort$ = useMemo(() => new Subject<string>(), [])
+  const downMd = useMediaQuery<MuiTheme>((theme) => theme.breakpoints.down('md'))
 
   useEffect(() => {
     const sub = baseURL$
@@ -147,6 +150,18 @@ export default function Settings() {
     client.updateExecutable().then(() => pushMessage(i18n.t('toastUpdated'), 'success'))
   }
 
+  const rpcMasks = useMemo(() => [
+    { value: 100 },
+    { value: 250 },
+    { value: 500 },
+    { value: 750 },
+    { value: 1000 },
+    { value: 2000 },
+  ].map(({value}) => ({
+    value,
+    ...(downMd ? { label: '' } : { label: `${value} ms` }),
+  })), [ downMd ])
+
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 8 }}>
       <Paper
@@ -202,19 +217,13 @@ export default function Settings() {
             </Typography>
             <Slider
               aria-label="rpc polling time"
-              defaultValue={pollingTime}
+              value={pollingTime}
               max={2000}
               getAriaValueText={(v: number) => `${v} ms`}
+              valueLabelFormat={(v: number) => `${v} ms`}
               step={null}
-              valueLabelDisplay="off"
-              marks={[
-                { value: 100, label: '100 ms' },
-                { value: 250, label: '250 ms' },
-                { value: 500, label: '500 ms' },
-                { value: 750, label: '750 ms' },
-                { value: 1000, label: '1000 ms' },
-                { value: 2000, label: '2000 ms' },
-              ]}
+              valueLabelDisplay="auto"
+              marks={rpcMasks}
               onChange={(_, value) => typeof value === 'number'
                 ? setPollingTime(value)
                 : setPollingTime(1000)
