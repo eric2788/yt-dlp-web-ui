@@ -157,7 +157,7 @@ export default function Downloaded() {
     Promise.all(selectable
       .filter(entry => entry.selected)
       .map(deleteFile)
-    ).then(fetcher)
+    ).then(fetcher).then(() => selected$.next([]))
   }
 
   useEffect(() => {
