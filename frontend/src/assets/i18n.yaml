@@ -49,6 +49,7 @@ languages:
     themeTogglerLabel: Theme toggler
     loadingLabel: Loading...
     appTitle: App title
+    installApp: Install App
     savedTemplates: Saved templates
     templatesEditor: Templates editor
     templatesEditorNameLabel: Template name
@@ -74,6 +75,8 @@ languages:
     livestreamStopping: Stopping livestream download
     livestreamStoppedAll: All livestream downloads stopped
     livestreamStopped: Livestream download stopped
+    noliveStreamMonitored: No livestreams monitored
+    noFiles: No files found
   german:
     urlInput: Video URL
     statusTitle: Status
@@ -285,6 +288,7 @@ languages:
     filenameOverrideOption: 啟用輸出文件名覆蓋
     customFilename: 自定義文件名（留空使用默認值）
     customPath: 自定義路徑
+    installApp: 安裝應用
     customArgs: 啟用自定義 yt-dlp 參數（能力越大 = 責任越大）
     customArgsInput: 自定義 yt-dlp 參數
     rpcConnErr: 連接 RPC 服務器發生錯誤
@@ -332,6 +336,8 @@ languages:
     livestreamStopping: 正在停止直播下載
     livestreamStoppedAll: 所有直播下載已停止
     livestreamStopped: 直播下載已停止
+    noliveStreamMonitored: 沒有正在監控的直播流
+    noFiles: 沒有文件
   spanish:
     urlInput: URL de YouTube u otro servicio compatible
     statusTitle: Estado

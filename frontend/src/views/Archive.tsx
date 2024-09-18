@@ -223,7 +223,7 @@ export default function Downloaded() {
           {i18n.t('archiveTitle')}
         </Typography>
         <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-          {selectable.length === 0 && 'No files found'}
+          {selectable.length === 0 && <Typography sx={{ paddingX: 1 }}>{i18n.t('noFiles')}</Typography>}
           {selectable.map((file, idx) => (
             <ListItem
               onContextMenu={(e) => {

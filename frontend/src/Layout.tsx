@@ -215,7 +215,7 @@ export default function Layout() {
                 <ListItemIcon>
                   <GetApp />
                 </ListItemIcon>
-                <ListItemText primary="Install App" />
+                <ListItemText primary={i18n.t('installApp')} />
               </ListItemButton>
             )}
             <ThemeToggler />

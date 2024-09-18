@@ -31,7 +31,7 @@ export default function NoLivestreams() {
         </SvgIcon>
       </Title>
       <Title fontWeight={'500'} fontSize={36} color={'gray'} textAlign={'center'}>
-        No livestreams monitored
+        {i18n.t('noliveStreamMonitored')}
       </Title>
     </FlexContainer>
   )
