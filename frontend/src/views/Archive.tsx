@@ -282,7 +282,7 @@ export default function Downloaded() {
                   secondary={<Stack direction={"column"}>
                     {file.name != '..' && new Date(file.modTime).toLocaleString()}
                     {!file.isDirectory && !upMd && (
-                      <Typography variant="caption" component="span" color="black">
+                      <Typography variant="caption" component="span">
                         {formatSize(file.size)}
                       </Typography>
                     )}
