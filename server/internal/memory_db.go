@@ -3,6 +3,7 @@ package internal
 import (
 	"encoding/gob"
 	"errors"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"sync"
@@ -115,6 +116,7 @@ func (m *MemoryDB) Restore(mq *MessageQueue) {
 
 	fd, err := os.Open(sf)
 	if err != nil {
+		slog.Warn("failed to restore session", slog.String("err", err.Error()))
 		return
 	}
 
