@@ -104,7 +104,14 @@ const DownloadCard: React.FC<Props> = ({ download, onCopy }) => {
         <FlexColGrowBox sx={{ paddingX: { sm: 1, xs: 0 }, paddingY: 1 }}>
           <Box sx={{ maxHeight: '64px' }}>
             {download.info.title !== '' ?
-              <Typography gutterBottom variant="h6" component="div" sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>
+              <Typography gutterBottom variant="h6" component="div"
+                sx={{
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                  display: '-webkit-box',
+                  WebkitBoxOrient: 'vertical',
+                  WebkitLineClamp: 2,
+                }}>
                 {download.info.title}
               </Typography> :
               <>
