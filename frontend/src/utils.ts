@@ -44,6 +44,10 @@ export function formatSize(bytes: number): string {
   return `${bytes.toFixed(i == 0 ? 0 : 2)} ${units.at(i)}`
 }
 
+export function getExtension(path: string): string {
+  return path.split('.').pop() || 'webm'
+}
+
 export const formatSpeedMiB = (val: number) =>
   `${(val / 1_048_576).toFixed(2)} MiB/s`
 

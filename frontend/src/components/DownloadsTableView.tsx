@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   ButtonGroup,
   IconButton,
   LinearProgress,
@@ -31,6 +32,7 @@ import { serverURL } from '../atoms/settings'
 import { useRecoilValue } from 'recoil'
 import { useToast } from "../hooks/toast";
 import { useI18n } from "../hooks/useI18n";
+import { useModal } from "../hooks/modal";
 
 const columns = [
   {
@@ -151,6 +153,33 @@ function DownloadsTableRow(download: RPCResult) {
 
   const { i18n } = useI18n()
 
+  const { popupModal } = useModal()
+  const confirmDelete = () => {
+    popupModal({
+      title: i18n.t('confirm'),
+      content: `${i18n.t('confirm')} ${isCompleted() ? i18n.t('clear') : i18n.t('stop')} ${download.info.title}?`,
+      buttons: [
+        (close) => (
+          <Button
+            key="confirm"
+            color="error" 
+            variant="outlined"
+            onClick={() => {
+              close()
+              pushMessage(isCompleted() ? i18n.t('clearing') : i18n.t('stopping'), 'info')
+              stop(download)
+                .then(() => pushMessage(isCompleted() ? i18n.t('cleared') : i18n.t('stopped'), 'success'))
+                .catch(err => pushMessage(err.message, "error"))
+            }}
+          >
+            {isCompleted() ? i18n.t('clear') : i18n.t('stop')}
+          </Button>
+        ),
+        (close) => <Button key="cancel" variant="outlined" onClick={close}>{i18n.t('cancel')}</Button>,
+      ]
+    })
+  }
+
   return (
     <>
     <TableCell>
@@ -186,12 +215,7 @@ function DownloadsTableRow(download: RPCResult) {
         <IconButton
           size="small"
           disabled={loading}
-          onClick={() => {
-            pushMessage(isCompleted() ? i18n.t('clearing') : i18n.t('stopping'), 'info')
-            stop(download)
-              .then(() => pushMessage(isCompleted() ? i18n.t('cleared') : i18n.t('stopped'), 'success'))
-              .catch(err => pushMessage(err.message, "error"))
-          }}
+          onClick={confirmDelete}
         >
           {download.progress.percentage === '-1' ? <DeleteIcon /> : <StopCircleIcon />}
 

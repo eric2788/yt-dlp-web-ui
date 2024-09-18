@@ -31,7 +31,8 @@ import { settingsState } from './atoms/settings'
 import { useI18n } from './hooks/useI18n'
 import { useRecoilValue } from 'recoil'
 import { useToast } from "./hooks/toast"
-import { GetApp } from "@mui/icons-material"
+import GetAppIcon from "@mui/icons-material/GetApp"
+import ModalProvider from "./providers/ModelProvider"
 
 declare module '@mui/material/styles' {
   interface BreakpointOverrides {
@@ -213,7 +214,7 @@ export default function Layout() {
             {installEvent && (
               <ListItemButton onClick={handleInstall}>
                 <ListItemIcon>
-                  <GetApp />
+                  <GetAppIcon />
                 </ListItemIcon>
                 <ListItemText primary={i18n.t('installApp')} />
               </ListItemButton>
@@ -236,6 +237,7 @@ export default function Layout() {
       </Box>
       <Footer />
       <Toaster />
+      <ModalProvider />
     </ThemeProvider>
   )
 }

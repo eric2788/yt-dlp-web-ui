@@ -44,6 +44,7 @@ import { useNavigate } from 'react-router-dom'
 import { useObservable } from '../hooks/observable'
 import { useRecoilValue } from 'recoil'
 import { useToast } from '../hooks/toast'
+import { activeDownloadsState } from "../atoms/downloads"
 
 export default function Downloaded() {
   const [menuPos, setMenuPos] = useState({ x: 0, y: 0 })
@@ -51,6 +52,7 @@ export default function Downloaded() {
   const [currentFile, setCurrentFile] = useState<DirectoryEntry>()
 
   const serverAddr = useRecoilValue(serverURL)
+  const downloads = useRecoilValue(activeDownloadsState)
   const navigate = useNavigate()
 
   const { i18n } = useI18n()
@@ -192,6 +194,7 @@ export default function Downloaded() {
         posX={menuPos.x}
         posY={menuPos.y}
         hide={!showMenu}
+        disableDelete={downloads.some(d => d.output.savedFilePath === currentFile?.path)}
         onDownload={() => {
           if (currentFile) {
             downloadFile(currentFile?.path)
@@ -244,6 +247,7 @@ export default function Downloaded() {
                   }
                   {!file.isDirectory && <>
                     <Checkbox
+                      disabled={downloads.some(d => d.output.savedFilePath === file.path)}
                       edge="end"
                       checked={file.selected}
                       onChange={() => addSelected(file.name)}
@@ -314,11 +318,11 @@ export default function Downloaded() {
         onClose={() => setOpenDialog(false)}
       >
         <DialogTitle>
-          Are you sure?
+          {i18n.t('confirm')}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            You're deleting:
+            {i18n.t('confirm_prompt') + i18n.t('clear')}
           </DialogContentText>
           <ul>
             {selected$.value.map((entry, idx) => (
@@ -328,7 +332,7 @@ export default function Downloaded() {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)}>
-            Cancel
+            {i18n.t('cancel')}
           </Button>
           <Button
             onClick={() => {
@@ -351,7 +355,8 @@ const IconMenu: React.FC<{
   hide: boolean
   onDownload: () => void
   onDelete: () => void
-}> = ({ posX, posY, hide, onDelete, onDownload }) => {
+  disableDelete?: boolean
+}> = ({ posX, posY, hide, onDelete, onDownload, disableDelete }) => {
   return (
     <Paper sx={{
       width: 320,
@@ -371,7 +376,7 @@ const IconMenu: React.FC<{
             Download
           </ListItemText>
         </MenuItem>
-        <MenuItem onClick={onDelete}>
+        <MenuItem onClick={onDelete} disabled={disableDelete}>
           <ListItemIcon>
             <DeleteForeverIcon fontSize="small" />
           </ListItemIcon>

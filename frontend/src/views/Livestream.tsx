@@ -85,7 +85,10 @@ const LiveStreamMonitorView: React.FC = () => {
           pushMessage(i18n.t('livestreamStoppingAll'), 'info')
           stop(undefined)
             .then(() => pushMessage(i18n.t('livestreamStoppedAll'), 'success'))
-            .catch(err => pushMessage(err.message, 'error'))
+            .catch(err => {
+              console.error(err)
+              pushMessage(err.message || err, 'error')
+            })
         }} 
       />
       <LivestreamDialog open={openDialog} onClose={() => setOpenDialog(s => !s)} />

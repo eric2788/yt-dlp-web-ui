@@ -6,7 +6,7 @@ export const ffetch = <T>(url: string, opt?: RequestInit) => tryCatch(
 )
 
 
-const fetcher = async <T>(url: string, opt?: RequestInit) => {
+export const fetcher = async <T>(url: string, opt?: RequestInit) => {
   const jwt = localStorage.getItem('token')
 
   if (opt && !opt.headers) {

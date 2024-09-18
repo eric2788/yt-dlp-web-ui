@@ -77,6 +77,13 @@ languages:
     livestreamStopped: Livestream download stopped
     noliveStreamMonitored: No livestreams monitored
     noFiles: No files found
+    confirm: Confirm
+    confirm_prompt: Confirm to
+    clear: Clear
+    stop: Stop
+    view: View
+    download: Download
+    cancel: Cancel
   german:
     urlInput: Video URL
     statusTitle: Status
@@ -294,7 +301,7 @@ languages:
     rpcConnErr: 連接 RPC 服務器發生錯誤
     splashText: 沒有正在進行的下載
     archiveTitle: 歸檔
-    clipboardAction: 覆制 URL 到剪貼板
+    clipboardAction: 已覆制 URL 到剪貼板
     playlistCheckbox: 下載播放列表（可能需要一段時間，提交後可以關閉頁面等待）
     restartAppMessage: 需要刷新頁面才能生效
     servedFromReverseProxyCheckbox: 處於反向代理的子目錄後
@@ -338,6 +345,13 @@ languages:
     livestreamStopped: 直播下載已停止
     noliveStreamMonitored: 沒有正在監控的直播流
     noFiles: 沒有文件
+    confirm: 確認
+    confirm_prompt: 確認要
+    clear: 清除
+    stop: 停止
+    view: 查看
+    download: 下載
+    cancel: 取消
   spanish:
     urlInput: URL de YouTube u otro servicio compatible
     statusTitle: Estado

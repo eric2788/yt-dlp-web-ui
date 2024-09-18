@@ -7,26 +7,32 @@ import {
   CardContent,
   CardMedia,
   Chip,
+  IconButton,
   LinearProgress,
+  Menu,
+  MenuItem,
   Paper,
   Skeleton,
   Stack,
   Typography
 } from '@mui/material'
 import { ProcessStatus, RPCResult } from '../types'
-import { base64URLEncode, ellipsis, formatSize, formatSpeedMiB, mapProcessStatus } from '../utils'
+import { base64URLEncode, ellipsis, formatSize, formatSpeedMiB, getExtension, mapProcessStatus } from '../utils'
+import { useCallback, useState } from 'react'
 
 import EightK from '@mui/icons-material/EightK'
 import FourK from '@mui/icons-material/FourK'
 import Hd from '@mui/icons-material/Hd'
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Sd from '@mui/icons-material/Sd'
+import { fetcher } from "../lib/httpClient"
 import { serverURL } from '../atoms/settings'
 import styled from '@emotion/styled'
-import { useCallback } from 'react'
+import { useI18n } from "../hooks/useI18n"
+import { useModal } from "../hooks/modal"
 import { useRPCOperation } from '../hooks/useRPC'
 import { useRecoilValue } from 'recoil'
 import { useToast } from '../hooks/toast'
-import { useI18n } from "../hooks/useI18n"
 
 type Props = {
   download: RPCResult
@@ -50,8 +56,8 @@ const FlexColGrowBox = styled(Box)`
 `
 
 const DownloadCard: React.FC<Props> = ({ download, onCopy }) => {
-  const serverAddr = useRecoilValue(serverURL)
 
+  const serverAddr = useRecoilValue(serverURL)
   const isCompleted = useCallback(
     () => download.progress.percentage === '-1',
     [download.progress.percentage]
@@ -83,8 +89,48 @@ const DownloadCard: React.FC<Props> = ({ download, onCopy }) => {
   const { pushMessage } = useToast()
   const { i18n } = useI18n()
 
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null)
+
+  const { popupModal } = useModal()
+  const confirmDelete = () => {
+    popupModal({
+      title: i18n.t('confirm'),
+      content: `${i18n.t('confirm')} ${isCompleted() ? i18n.t('clear') : i18n.t('stop')} ${download.info.title}?`,
+      buttons: [
+        (close) => (
+          <Button
+            key="confirm"
+            color="error"
+            variant="outlined"
+            onClick={() => {
+              close()
+              pushMessage(isCompleted() ? i18n.t('clearing') : i18n.t('stopping'), 'info')
+              stop(download)
+                .then(() => fetcher(`${serverAddr}/archive/delete`, {
+                  method: 'POST',
+                  body: JSON.stringify({
+                    path: download.output.savedFilePath,
+                  })
+                }))
+                .then(() => pushMessage(isCompleted() ? i18n.t('cleared') : i18n.t('stopped'), 'success'))
+                .catch(err => {
+                  console.error(err)
+                  pushMessage(err.message || err, "error")
+                })
+            }}
+          >
+            {isCompleted() ? i18n.t('clear') : i18n.t('stop')}
+          </Button>
+        ),
+        (close) => <Button key="cancel" variant="outlined" onClick={close}>{i18n.t('cancel')}</Button>,
+      ]
+    })
+  }
+
   return (
     <Paper elevation={3} sx={{
+      minWidth: '250px',
       display: 'flex',
       width: '100%',
       flexDirection: 'column',
@@ -97,11 +143,12 @@ const DownloadCard: React.FC<Props> = ({ download, onCopy }) => {
             height={180}
             image={download.info.thumbnail}
           /> :
-          <Skeleton variant="rectangular" height={180} />
+          <Skeleton animation={[ProcessStatus.PENDING, ProcessStatus.DOWNLOADING].includes(download.progress.process_status) ? 'pulse' : false} variant="rectangular" height={180} />
         }
+        {!isCompleted() && <LinearProgress variant={download.progress.process_status === ProcessStatus.DOWNLOADING ? 'determinate' : 'indeterminate'} value={percentageToNumber()} />}
       </Box>
-      <FlexColGrowBox p={1}>
-        <FlexColGrowBox sx={{ paddingX: { sm: 1, xs: 0 }, paddingY: 1 }}>
+      <FlexColGrowBox sx={{ paddingX: { sm: 2, xs: 1 }, paddingY: 1 }}>
+        <FlexColGrowBox sx={{ paddingTop: 1 }}>
           <Box sx={{ maxHeight: '64px' }}>
             {download.info.title !== '' ?
               <Typography gutterBottom variant="h6" component="div"
@@ -120,63 +167,93 @@ const DownloadCard: React.FC<Props> = ({ download, onCopy }) => {
               </>
             }
           </Box>
-          <Stack direction="row" spacing={0.5} py={1}>
-            <Chip
-              label={
-                isCompleted()
-                  ? 'Completed'
-                  : mapProcessStatus(download.progress.process_status)
-              }
-              color="primary"
-              size="small"
-            />
-            <Typography>
-              {!isCompleted() ? download.progress.percentage : ''}
-            </Typography>
-            <Typography>
-              &nbsp;
-              {!isCompleted() ? formatSpeedMiB(download.progress.speed) : ''}
-            </Typography>
-            <Typography>
-              {formatSize(download.info.filesize_approx ?? 0)}
-            </Typography>
-            <Resolution resolution={download.info.resolution} />
+          <Stack direction="row" spacing={0.2} pt={0.5} sx={{ justifyContent: 'space-between', flexShrink: 1 }}>
+            <Stack direction="row" gap={1}>
+              <Chip
+                label={
+                  isCompleted()
+                    ? 'Completed'
+                    : mapProcessStatus(download.progress.process_status)
+                }
+                color={isCompleted() ? 'success' : 'primary'}
+                size="small"
+                variant="outlined"
+              />
+              <Chip
+                label={'.' + getExtension(download.output.savedFilePath)}
+                size="small"
+                color="secondary"
+                variant="outlined"
+              />
+              <Resolution resolution={download.info.resolution} />
+              <Typography>
+                {!isCompleted() ? download.progress.percentage : ''}
+              </Typography>
+              <Typography>
+                &nbsp;
+                {!isCompleted() ? formatSpeedMiB(download.progress.speed) : ''}
+              </Typography>
+            </Stack>
+            <IconButton
+              id="more-button"
+              aria-controls={menuOpen ? 'more-menu' : undefined}
+              aria-expanded={menuOpen ? 'true' : undefined}
+              aria-haspopup="true"
+              sx={{ display: { xs: 'inline', sm: 'none', padding: 0 } }}
+              onClick={(e) => {
+                setMenuOpen(true)
+                setMenuAnchor(e.currentTarget)
+              }}
+            >
+              <MoreVertIcon />
+            </IconButton>
+            <Menu
+              id="more-menu"
+              MenuListProps={{ 'aria-labelledby': 'more-button' }}
+              onClose={() => {
+                setMenuAnchor(null)
+                setMenuOpen(false)
+              }}
+              anchorEl={menuAnchor}
+              open={menuOpen}
+            >
+              <MenuItem disabled={loading} onClick={() => viewFile(download.output.savedFilePath)}>{i18n.t('view')}</MenuItem>
+              <MenuItem disabled={loading} onClick={() => downloadFile(download.output.savedFilePath)}>{i18n.t('download')}</MenuItem>
+              <MenuItem disabled={loading} onClick={confirmDelete}>
+                {isCompleted() ? i18n.t('clear') : i18n.t('stop')}
+              </MenuItem>
+            </Menu>
           </Stack>
         </FlexColGrowBox>
-        <Box sx={{ display: 'flex', flexDirection: { sm: 'row', xs: 'column' }, gap: 1 }}>
-          <Button
-            disabled={loading}
-            variant="contained"
-            size="small"
-            color="primary"
-            onClick={() => {
-              pushMessage(isCompleted() ? i18n.t('clearing') : i18n.t('stopping'), 'info')
-              stop(download)
-                .then(() => pushMessage(isCompleted() ? i18n.t('cleared') : i18n.t('stopped'), 'success'))
-                .catch(err => pushMessage(err.message, "error"))
-            }}
-          >
-            {isCompleted() ? "Clear" : "Stop"}
-          </Button>
+        <Box sx={{ display: { xs: 'none', sm: 'flex' }, flexDirection: { sm: 'row', xs: 'column' }, gap: 1, paddingTop: 1.5 }}>
           {isCompleted() &&
             <>
               <Button
                 disabled={loading}
                 variant="contained"
-                size="small"
+                disableElevation
                 color="primary"
-                onClick={() => downloadFile(download.output.savedFilePath)}
+                onClick={() => viewFile(download.output.savedFilePath)}
               >
-                Download
+                {i18n.t('view')}
               </Button>
               <Button
                 disabled={loading}
                 variant="contained"
-                size="small"
+                disableElevation
                 color="primary"
-                onClick={() => viewFile(download.output.savedFilePath)}
+                onClick={() => downloadFile(download.output.savedFilePath)}
               >
-                View
+                {i18n.t('download')}
+              </Button>
+              <Button
+                disabled={loading}
+                variant="outlined"
+                disableElevation
+                color="error"
+                onClick={confirmDelete}
+              >
+                {isCompleted() ? i18n.t('clear') : i18n.t('stop')}
               </Button>
             </>
           }
