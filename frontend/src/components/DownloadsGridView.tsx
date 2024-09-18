@@ -18,7 +18,10 @@ const DownloadsGridView: React.FC = () => {
           <Grid item xs={4} sm={8} md={6} xl={4} key={download.id}>
             <DownloadCard
               download={download}
-              onCopy={() => pushMessage(i18n.t('clipboardAction'), 'info')}
+              onCopy={() => {
+                navigator.clipboard.writeText(download.info.url)
+                pushMessage(i18n.t('clipboardAction'), 'info')
+              }}
             />
           </Grid>
         ))
